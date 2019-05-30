@@ -229,7 +229,7 @@ class FileSystemTokenCache(TokenCache):
       flags |= os.O_BINARY
 
     try:
-      fd = os.open(cache_file, flags, 0600)
+      fd = os.open(cache_file, flags, 0o600)
     except (OSError, IOError) as e:
       LOG.warning('FileSystemTokenCache.PutToken: '
                   'Failed to create cache file %s: %s', cache_file, e)
@@ -475,7 +475,7 @@ class ServiceAccountCredentials(ServiceAccountCredentials):
         retval.token_expiry = datetime.datetime.strptime(
             data['token_expiry'], EXPIRY_FORMAT)
       return retval
-    except KeyError, e:
+    except KeyError as e:
       raise Exception('Your JSON credentials are invalid; '
                       'missing required entry %s.' % e[0])
 # pylint: enable=protected-access
@@ -610,7 +610,7 @@ class OAuth2UserAccountClient(OAuth2Client):
       credentials.refresh(http)
       return AccessToken(credentials.access_token,
           credentials.token_expiry, datetime_strategy=self.datetime_strategy)
-    except AccessTokenRefreshError, e:
+    except AccessTokenRefreshError as e:
       if 'Invalid response 403' in e.message:
         # This is the most we can do at the moment to accurately detect rate
         # limiting errors since they come back as 403s with no further
@@ -672,7 +672,7 @@ def _IsGCE():
     # this approach, we'll avoid having to enumerate all possible non-transient
     # socket errors.
     return False
-  except Exception, e:
+  except Exception as e:
     LOG.warning("Failed to determine whether we're running on GCE, so we'll"
                 "assume that we aren't: %s", e)
     return False
